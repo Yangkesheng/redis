@@ -47,10 +47,10 @@ typedef struct listIter {
 typedef struct list {
     listNode *head;
     listNode *tail;
-    void *(*dup)(void *ptr);
-    void (*free)(void *ptr);
-    int (*match)(void *ptr, void *key);
-    unsigned long len;
+    void *(*dup)(void *ptr);//节点值复制函数
+    void (*free)(void *ptr);//节点值释放函数
+    int (*match)(void *ptr, void *key);//节点值对比
+    unsigned long len;//列表包含数量
 } list;
 
 /* Functions implemented as macros */
