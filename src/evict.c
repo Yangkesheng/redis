@@ -69,7 +69,7 @@ static struct evictionPoolEntry *EvictionPoolLRU;
  * in a reduced-bits format that can be used to set and check the
  * object->lru field of redisObject structures. */
 unsigned int getLRUClock(void) {
-    return (mstime()/LRU_CLOCK_RESOLUTION) & LRU_CLOCK_MAX;
+    return (mstime()/LRU_CLOCK_RESOLUTION) & LRU_CLOCK_MAX;                             //与最大值，11111（24个1），只方后24位
 }
 
 /* This function is used to obtain the current LRU clock.
@@ -78,7 +78,7 @@ unsigned int getLRUClock(void) {
  * precomputed value, otherwise we need to resort to a system call. */
 unsigned int LRU_CLOCK(void) {
     unsigned int lruclock;
-    if (1000/server.hz <= LRU_CLOCK_RESOLUTION) {
+    if (1000/server.hz <= LRU_CLOCK_RESOLUTION) {             //小于1000/服务器刷新频率时，直接去服务器的lruclock
         atomicGet(server.lruclock,lruclock);
     } else {
         lruclock = getLRUClock();

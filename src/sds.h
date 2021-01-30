@@ -85,7 +85,7 @@ struct __attribute__ ((__packed__)) sdshdr64 {
 #define SDS_TYPE_5_LEN(f) ((f)>>SDS_TYPE_BITS)
 
 static inline size_t sdslen(const sds s) {
-    unsigned char flags = s[-1];//通过地址访问结构体sdshr8成员flags
+    unsigned char flags = s[-1];//通过地址访问结构体sdshr8成员flags。调用这个函数时一般都用，sds结构体的buf成员去调用
     switch(flags&SDS_TYPE_MASK) {
         case SDS_TYPE_5:
             return SDS_TYPE_5_LEN(flags);

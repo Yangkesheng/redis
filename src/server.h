@@ -639,19 +639,19 @@ typedef struct RedisModuleDigest {
 
 #define LRU_BITS 24
 #define LRU_CLOCK_MAX ((1<<LRU_BITS)-1) /* Max value of obj->lru */
-#define LRU_CLOCK_RESOLUTION 1000 /* LRU clock resolution in ms */
+#define LRU_CLOCK_RESOLUTION 1000 /* LRU clock resolution in ms */              //算法精度
 
 #define OBJ_SHARED_REFCOUNT INT_MAX     /* Global object never destroyed. */
 #define OBJ_STATIC_REFCOUNT (INT_MAX-1) /* Object allocated in the stack. */
 #define OBJ_FIRST_SPECIAL_REFCOUNT OBJ_STATIC_REFCOUNT
 typedef struct redisObject {
-    unsigned type:4;
-    unsigned encoding:4;
-    unsigned lru:LRU_BITS; /* LRU time (relative to global lru_clock) or
-                            * LFU data (least significant 8 bits frequency
+    unsigned type:4;                                                            //类型，占4位
+    unsigned encoding:4;                                                        //设定对象所使用的编码
+    unsigned lru:LRU_BITS; /* LRU time (relative to global lru_clock) or        //LRU算法（最近使用时间）存储对象新建或者更新的时间戳
+                            * LFU data (least significant 8 bits frequency      //LFU（使用次数）
                             * and most significant 16 bits access time). */
-    int refcount;
-    void *ptr;
+    int refcount;                                                               //这个对象被引用了多少次
+    void *ptr;                                                                  //指向对象的底层实现数据结构的指针，而这些数据结构由对象的encoding属性决定
 } robj;
 
 /* The a string name for an object's type as listed above
@@ -951,20 +951,20 @@ struct sharedObjectsStruct {
 };
 
 /* ZSETs use a specialized version of Skiplists */
-typedef struct zskiplistNode {
+typedef struct zskiplistNode {//跳跃表节点
     sds ele;
     double score;
-    struct zskiplistNode *backward;
+    struct zskiplistNode *backward;              //后退指针
     struct zskiplistLevel {
-        struct zskiplistNode *forward;
-        unsigned long span;
+        struct zskiplistNode *forward;           //前进指针
+        unsigned long span;                      //跨度
     } level[];
 } zskiplistNode;
 
 typedef struct zskiplist {
     struct zskiplistNode *header, *tail;
-    unsigned long length;
-    int level;
+    unsigned long length;                       //记录跳跃表的的长度。也即是，即跳跃表目前包含的数量（表头第一个节点不算）
+    int level;                                  //记录目前跳跃表内，层数最大的那个节点的层数（表头第一个节点层数不算）
 } zskiplist;
 
 typedef struct zset {
@@ -1116,7 +1116,7 @@ struct redisServer {
     int config_hz;              /* Configured HZ value. May be different than
                                    the actual 'hz' field value if dynamic-hz
                                    is enabled. */
-    int hz;                     /* serverCron() calls frequency in hertz */
+    int hz;                     /* serverCron() calls frequency in hertz */     //服务器刷新频率
     int in_fork_child;          /* indication that this is a fork child */
     redisDb *db;
     dict *commands;             /* Command table */
