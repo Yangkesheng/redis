@@ -358,7 +358,7 @@ void incrRefCount(robj *o) {
     }
 }
 
-void decrRefCount(robj *o) {
+void decrRefCount(robj *o) {                //内存回收
     if (o->refcount == 1) {
         switch(o->type) {
         case OBJ_STRING: freeStringObject(o); break;

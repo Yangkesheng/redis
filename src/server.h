@@ -625,15 +625,15 @@ typedef struct RedisModuleDigest {
 /* Objects encoding. Some kind of objects like Strings and Hashes can be
  * internally represented in multiple ways. The 'encoding' field of the object
  * is set to one of this fields for this object. */
-#define OBJ_ENCODING_RAW 0     /* Raw representation */
-#define OBJ_ENCODING_INT 1     /* Encoded as integer */
+#define OBJ_ENCODING_RAW 0     /* Raw representation */   
+#define OBJ_ENCODING_INT 1     /* Encoded as integer */                         //vlaue < 2的63次方 用这个，大于了先用OBJ_ENCODING_EMBSTR，
 #define OBJ_ENCODING_HT 2      /* Encoded as hash table */
 #define OBJ_ENCODING_ZIPMAP 3  /* Encoded as zipmap */
 #define OBJ_ENCODING_LINKEDLIST 4 /* No longer used: old list encoding. */
 #define OBJ_ENCODING_ZIPLIST 5 /* Encoded as ziplist */
 #define OBJ_ENCODING_INTSET 6  /* Encoded as intset */
 #define OBJ_ENCODING_SKIPLIST 7  /* Encoded as skiplist */
-#define OBJ_ENCODING_EMBSTR 8  /* Embedded sds string encoding */
+#define OBJ_ENCODING_EMBSTR 8  /* Embedded sds string encoding */              //用于短字符串，超过OBJ_ENCODING_EMBSTR_SIZE_LIMIT 44位，用OBJ_ENCODING_RAW
 #define OBJ_ENCODING_QUICKLIST 9 /* Encoded as linked list of ziplists */
 #define OBJ_ENCODING_STREAM 10 /* Encoded as a radix tree of listpacks */
 
@@ -650,7 +650,7 @@ typedef struct redisObject {
     unsigned lru:LRU_BITS; /* LRU time (relative to global lru_clock) or        //LRU算法（最近使用时间）存储对象新建或者更新的时间戳
                             * LFU data (least significant 8 bits frequency      //LFU（使用次数）
                             * and most significant 16 bits access time). */
-    int refcount;                                                               //这个对象被引用了多少次
+    int refcount;                                                               //这个对象被引用了多少次,当等于0时，调用decrRefCount回收内存
     void *ptr;                                                                  //指向对象的底层实现数据结构的指针，而这些数据结构由对象的encoding属性决定
 } robj;
 
@@ -968,8 +968,8 @@ typedef struct zskiplist {
 } zskiplist;
 
 typedef struct zset {
-    dict *dict;
-    zskiplist *zsl;
+    dict *dict;     
+    zskiplist *zsl;                             //跳跃表
 } zset;
 
 typedef struct clientBufferLimitsConfig {
@@ -1118,7 +1118,7 @@ struct redisServer {
                                    is enabled. */
     int hz;                     /* serverCron() calls frequency in hertz */     //服务器刷新频率
     int in_fork_child;          /* indication that this is a fork child */
-    redisDb *db;
+    redisDb *db;                //一个数组，保存着服务器中的所有数据库;初始化服务器时，程序会根据服务器状态的dbnum属性来决定应该创建多少个数据库
     dict *commands;             /* Command table */
     dict *orig_commands;        /* Command table before command renaming. */
     aeEventLoop *el;
@@ -1261,7 +1261,7 @@ struct redisServer {
     int active_defrag_cycle_max;       /* maximal effort for defrag in CPU percentage */
     unsigned long active_defrag_max_scan_fields; /* maximum number of fields of set/hash/zset/list to process from within the main dict scan */
     size_t client_max_querybuf_len; /* Limit for client query buffer length */
-    int dbnum;                      /* Total number of configured DBs */
+    int dbnum;                      /* Total number of configured DBs */                            //服务器数据库数量
     int supervised;                 /* 1 if supervised, 0 otherwise. */
     int supervised_mode;            /* See SUPERVISED_* */
     int daemonize;                  /* True if running as a daemon */

@@ -80,7 +80,7 @@ typedef struct dictht {
 typedef struct dict {               //字典
     dictType *type;                 //类型特定函数
     void *privdata;                 //私有数据
-    dictht ht[2];                   //ht[1]只会在对ht[0]进行时使用
+    dictht ht[2];                   //ht[1]只会在对ht[0]进行重新哈希时使用
     long rehashidx; /* rehashing not in progress if rehashidx == -1 */ //当rehash不在进行时，值为-1
     unsigned long iterators; /* number of iterators currently running */
 } dict;
