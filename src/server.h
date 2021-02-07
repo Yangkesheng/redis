@@ -1281,7 +1281,7 @@ struct redisServer {
     int aof_rewrite_scheduled;      /* Rewrite once BGSAVE terminates. */
     pid_t aof_child_pid;            /* PID if rewriting process */
     list *aof_rewrite_buf_blocks;   /* Hold changes during an AOF rewrite. */
-    sds aof_buf;      /* AOF buffer, written before entering the event loop */
+    sds aof_buf;      /* AOF buffer, written before entering the event loop */                          //AOF缓冲区
     int aof_fd;       /* File descriptor of currently selected AOF file */
     int aof_selected_db; /* Currently selected DB in AOF */
     time_t aof_flush_postponed_start; /* UNIX time of postponed AOF flush */
@@ -1305,7 +1305,7 @@ struct redisServer {
     int aof_pipe_read_ack_from_parent;
     int aof_stop_sending_diff;     /* If true stop sending accumulated diffs
                                       to child process. */
-    sds aof_child_diff;             /* AOF diff accumulator child side. */
+    sds aof_child_diff;             /* AOF diff accumulator child side. */          //子进程在重写aof文件时，有新的命令过来先记录到这里，子进程结束后给父发信号，父调用信号处理函数（这里会阻塞，不能在处理新的redis命令）：1.追加到aof文件。2.原子的覆盖原来的aof文件
     /* RDB persistence */
     long long dirty;                /* Changes to DB from the last save */          //记录距离上次执行SAVE命令或者BGSAVE命令之后，进行了多少次数据库修改
     long long dirty_before_bgsave;  /* Used to restore dirty on failed BGSAVE */

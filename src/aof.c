@@ -500,9 +500,9 @@ try_fsync:
         return;
 
     /* Perform the fsync if needed. */
-    if (server.aof_fsync == AOF_FSYNC_ALWAYS) {
-        /* redis_fsync is defined as fdatasync() for Linux in order to avoid
-         * flushing metadata. */
+    if (server.aof_fsync == AOF_FSYNC_ALWAYS) {                              /*除了同步文件的修改内容（脏页），fsync还会同步文件的描述信息（metadata，包括size、访问时间st_atime & st_mtime等等），*/
+        /* redis_fsync is defined as fdatasync() for Linux in order to avoid  因为文件的数据和metadata通常存在硬盘的不同地方，因此fsync至少需要两次IO写操作
+         * flushing metadata. */                                             /*fdatasync()fdatasync的功能与fsync类似，但是仅仅在必要的情况下才会同步metadata(文件大小重要更改，最后修改时间等不重要属性不修改)，因此可以减少一次IO写操作*/
         latencyStartMonitor(latency);
         redis_fsync(server.aof_fd); /* Let's try to get this data on the disk */
         latencyEndMonitor(latency);
