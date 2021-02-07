@@ -1961,8 +1961,7 @@ void cronUpdateMemoryStats() {
  * a macro is used: run_with_period(milliseconds) { .... }
  */
 
-int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientData) {
-    int j;
+int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientData) { //Redis周期性操作函数，直接调用的都以server.hz.为了限制减少执行频率的，使用宏run_with_period控制
     UNUSED(eventLoop);
     UNUSED(id);
     UNUSED(clientData);
@@ -2073,7 +2072,7 @@ int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientData) {
     } else {
         /* If there is not a background saving/rewrite in progress check if
          * we have to save/rewrite now. */
-        for (j = 0; j < server.saveparamslen; j++) {
+        for (j = 0; j < server.saveparamslen; j++) {         //判断是否去要save
             struct saveparam *sp = server.saveparams+j;
 
             /* Save if we reached the given amount of changes,

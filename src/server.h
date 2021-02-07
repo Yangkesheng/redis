@@ -683,8 +683,8 @@ typedef struct clientReplyBlock {
  * by integers from 0 (the default database) up to the max configured
  * database. The database number is the 'id' field in the structure. */
 typedef struct redisDb {
-    dict *dict;                 /* The keyspace for this DB */
-    dict *expires;              /* Timeout of keys with a timeout set */
+    dict *dict;                 /* The keyspace for this DB */              //数据库键空间，保存着数据库中的所有键值对
+    dict *expires;              /* Timeout of keys with a timeout set */    //保存了数据库中所有键的过期时间。键：指针指向键空间中的某个键对象。值：long long整数。指向数据库键的过期时间（毫秒，时间戳）
     dict *blocking_keys;        /* Keys with clients waiting for data (BLPOP)*/
     dict *ready_keys;           /* Blocked keys that received a PUSH */
     dict *watched_keys;         /* WATCHED keys for MULTI/EXEC CAS */
@@ -836,7 +836,7 @@ typedef struct client {
     uint64_t id;            /* Client incremental unique ID. */
     connection *conn;
     int resp;               /* RESP protocol version. Can be 2 or 3. */
-    redisDb *db;            /* Pointer to currently SELECTed DB. */
+    redisDb *db;            /* Pointer to currently SELECTed DB. */  //记录客户端当前正在使用的数据库
     robj *name;             /* As set by CLIENT SETNAME. */
     sds querybuf;           /* Buffer we use to accumulate client queries. */
     size_t qb_pos;          /* The position we have read in querybuf. */
@@ -923,8 +923,8 @@ typedef struct client {
 } client;
 
 struct saveparam {
-    time_t seconds;
-    int changes;
+    time_t seconds;   //秒数
+    int changes;      //修改数
 };
 
 struct moduleLoadQueueEntry {
@@ -1307,17 +1307,17 @@ struct redisServer {
                                       to child process. */
     sds aof_child_diff;             /* AOF diff accumulator child side. */
     /* RDB persistence */
-    long long dirty;                /* Changes to DB from the last save */
+    long long dirty;                /* Changes to DB from the last save */          //记录距离上次执行SAVE命令或者BGSAVE命令之后，进行了多少次数据库修改
     long long dirty_before_bgsave;  /* Used to restore dirty on failed BGSAVE */
     pid_t rdb_child_pid;            /* PID of RDB saving child */
-    struct saveparam *saveparams;   /* Save points array for RDB */
+    struct saveparam *saveparams;   /* Save points array for RDB */                 //从conf读取save何时保存的情况
     int saveparamslen;              /* Number of saving points */
     char *rdb_filename;             /* Name of RDB file */
     int rdb_compression;            /* Use compression in RDB? */
     int rdb_checksum;               /* Use RDB checksum? */
     int rdb_del_sync_files;         /* Remove RDB files used only for SYNC if
                                        the instance does not use persistence. */
-    time_t lastsave;                /* Unix time of last successful save */
+    time_t lastsave;                /* Unix time of last successful save */          //最后一次save时间
     time_t lastbgsave_try;          /* Unix time of last attempted bgsave */
     time_t rdb_save_time_last;      /* Time used by last RDB save run. */
     time_t rdb_save_time_start;     /* Current RDB save start time. */

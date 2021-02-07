@@ -96,8 +96,8 @@ sds keyspaceEventsFlagsToString(int flags) {
  * 'event' is a C string representing the event name.
  * 'key' is a Redis object representing the key name.
  * 'dbid' is the database ID where the key lives.  */
-void notifyKeyspaceEvent(int type, char *event, robj *key, int dbid) {
-    sds chan;
+void notifyKeyspaceEvent(int type, char *event, robj *key, int dbid) {//发送数据库通知的功能。type当前发送通知类型
+    sds chan;                                                         //event、keys和dbid分别是事件的键和产生事件的数据库号码
     robj *chanobj, *eventobj;
     int len = -1;
     char buf[24];
@@ -114,7 +114,7 @@ void notifyKeyspaceEvent(int type, char *event, robj *key, int dbid) {
     eventobj = createStringObject(event,strlen(event));
 
     /* __keyspace@<db>__:<key> <event> notifications. */
-    if (server.notify_keyspace_events & NOTIFY_KEYSPACE) {
+    if (server.notify_keyspace_events & NOTIFY_KEYSPACE) {   //发送键空间通知
         chan = sdsnewlen("__keyspace@",11);
         len = ll2string(buf,sizeof(buf),dbid);
         chan = sdscatlen(chan, buf, len);
@@ -126,7 +126,7 @@ void notifyKeyspaceEvent(int type, char *event, robj *key, int dbid) {
     }
 
     /* __keyevent@<db>__:<event> <key> notifications. */
-    if (server.notify_keyspace_events & NOTIFY_KEYEVENT) {
+    if (server.notify_keyspace_events & NOTIFY_KEYEVENT) {   //发送键事件通知
         chan = sdsnewlen("__keyevent@",11);
         if (len == -1) len = ll2string(buf,sizeof(buf),dbid);
         chan = sdscatlen(chan, buf, len);
