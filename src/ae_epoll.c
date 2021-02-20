@@ -75,7 +75,7 @@ static int aeApiAddEvent(aeEventLoop *eventLoop, int fd, int mask) {
     struct epoll_event ee = {0}; /* avoid valgrind warning */
     /* If the fd was already monitored for some event, we need a MOD
      * operation. Otherwise we need an ADD operation. */
-    int op = eventLoop->events[fd].mask == AE_NONE ?
+    int op = eventLoop->events[fd].mask == AE_NONE ?        //对已经监听的fd，需要进行MOD操作。否则，进行ADD操作
             EPOLL_CTL_ADD : EPOLL_CTL_MOD;
 
     ee.events = 0;
@@ -109,8 +109,8 @@ static int aeApiPoll(aeEventLoop *eventLoop, struct timeval *tvp) {
     aeApiState *state = eventLoop->apidata;
     int retval, numevents = 0;
 
-    retval = epoll_wait(state->epfd,state->events,eventLoop->setsize,
-            tvp ? (tvp->tv_sec*1000 + tvp->tv_usec/1000) : -1);
+    retval = epoll_wait(state->epfd,state->events,eventLoop->setsize,       //返回就绪文件描述符的个数，epoll_wait检测到就绪的事件
+            tvp ? (tvp->tv_sec*1000 + tvp->tv_usec/1000) : -1);             //从内核事件表（由epfd参数指定）中复制到它的第二个参数指向的数组中
     if (retval > 0) {
         int j;
 

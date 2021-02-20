@@ -1121,7 +1121,7 @@ struct redisServer {
     redisDb *db;                //一个数组，保存着服务器中的所有数据库;初始化服务器时，程序会根据服务器状态的dbnum属性来决定应该创建多少个数据库
     dict *commands;             /* Command table */
     dict *orig_commands;        /* Command table before command renaming. */
-    aeEventLoop *el;
+    aeEventLoop *el;            //记录
     redisAtomic unsigned int lruclock; /* Clock for LRU eviction */
     volatile sig_atomic_t shutdown_asap; /* SHUTDOWN needed ASAP */
     int activerehashing;        /* Incremental rehash in serverCron() */

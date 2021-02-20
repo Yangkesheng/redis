@@ -46,7 +46,7 @@
 #include "config.h"
 
 /* Include the best multiplexing layer supported by this system.
- * The following should be ordered by performances, descending. */
+ * The following should be ordered by performances, descending. *///编译时自动选择系统中性能最高的I/O多路服复用函数库来作为REDIS的I/O复用的底层实现
 #ifdef HAVE_EVPORT
 #include "ae_evport.c"
 #else
@@ -156,7 +156,7 @@ void aeStop(aeEventLoop *eventLoop) {
 int aeCreateFileEvent(aeEventLoop *eventLoop, int fd, int mask,
         aeFileProc *proc, void *clientData)
 {
-    if (fd >= eventLoop->setsize) {
+    if (fd >= eventLoop->setsize) {         //超过最大监听事件个数
         errno = ERANGE;
         return AE_ERR;
     }
@@ -345,7 +345,7 @@ static int processTimeEvents(aeEventLoop *eventLoop) {
  * if flags has AE_CALL_BEFORE_SLEEP set, the beforesleep callback is called.
  *
  * The function returns the number of events processed. */
-int aeProcessEvents(aeEventLoop *eventLoop, int flags)
+int aeProcessEvents(aeEventLoop *eventLoop, int flags)          //文件事件分派器，先调用aeApiPoll(它调用epoll_wait)函数来等待事件产生，然后处理已产生事件
 {
     int processed = 0, numevents;
 
@@ -470,7 +470,7 @@ int aeWait(int fd, int mask, long long milliseconds) {
     if (mask & AE_READABLE) pfd.events |= POLLIN;
     if (mask & AE_WRITABLE) pfd.events |= POLLOUT;
 
-    if ((retval = poll(&pfd, 1, milliseconds))== 1) {
+    if ((retval = poll(&pfd, 1, milliseconds))== 1) {       //events成员告诉poll监听fd上的那些事件revents成员是由内核修改，通知fd实际发生那些事件
         if (pfd.revents & POLLIN) retmask |= AE_READABLE;
         if (pfd.revents & POLLOUT) retmask |= AE_WRITABLE;
         if (pfd.revents & POLLERR) retmask |= AE_WRITABLE;
