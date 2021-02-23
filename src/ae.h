@@ -100,11 +100,11 @@ typedef struct aeEventLoop {
     int maxfd;   /* highest file descriptor currently registered */
     int setsize; /* max number of file descriptors tracked */           //最多监听事件个数
     long long timeEventNextId;
-    aeFileEvent *events; /* Registered events */
-    aeFiredEvent *fired; /* Fired events */
+    aeFileEvent *events; /* Registered events */                        //存放监听的文件事件和处理其文件的具体func
+    aeFiredEvent *fired; /* Fired events */                             //存放可以处理的文件描述符
     aeTimeEvent *timeEventHead;
     int stop;
-    void *apidata; /* This is used for polling API specific data */     //记录epoll_create返回的文件描述符，将u用作其他所有epoll系统调用的的一个参数
+    void *apidata; /* This is used for polling API specific data */     //记录epoll_create返回的文件描述符，将用作其他所有epoll系统调用的的一个参数
     aeBeforeSleepProc *beforesleep;
     aeBeforeSleepProc *aftersleep;
     int flags;
@@ -114,10 +114,10 @@ typedef struct aeEventLoop {
 aeEventLoop *aeCreateEventLoop(int setsize);
 void aeDeleteEventLoop(aeEventLoop *eventLoop);
 void aeStop(aeEventLoop *eventLoop);
-int aeCreateFileEvent(aeEventLoop *eventLoop, int fd, int mask,
-        aeFileProc *proc, void *clientData);
-void aeDeleteFileEvent(aeEventLoop *eventLoop, int fd, int mask);
-int aeGetFileEvents(aeEventLoop *eventLoop, int fd);
+int aeCreateFileEvent(aeEventLoop *eventLoop, int fd, int mask,             //接受一个套接字描述符、一个事件类型，以及一个事件处理器作为参数，将给定套接字的
+        aeFileProc *proc, void *clientData);                                //给定事件加入到I/O多路复用程序的监听范围之内,并对事件和事件处理器进行关联
+void aeDeleteFileEvent(aeEventLoop *eventLoop, int fd, int mask);           //并取消事件和事件处理器之间的关联 
+int aeGetFileEvents(aeEventLoop *eventLoop, int fd);                        //返回该套接字正在被监听的是家类型
 long long aeCreateTimeEvent(aeEventLoop *eventLoop, long long milliseconds,
         aeTimeProc *proc, void *clientData,
         aeEventFinalizerProc *finalizerProc);

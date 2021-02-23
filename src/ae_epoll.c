@@ -33,7 +33,7 @@
 
 typedef struct aeApiState {
     int epfd;
-    struct epoll_event *events;
+    struct epoll_event *events;     //在aeApiPoll中做调用epoll_wait的第二个返回值参数.epoll_wait会将就绪的文件描述符拷贝到这里面
 } aeApiState;
 
 static int aeApiCreate(aeEventLoop *eventLoop) {
