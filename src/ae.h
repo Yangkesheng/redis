@@ -54,7 +54,7 @@
 #define AE_CALL_BEFORE_SLEEP (1<<3)
 #define AE_CALL_AFTER_SLEEP (1<<4)
 
-#define AE_NOMORE -1
+#define AE_NOMORE -1             //定时事件，该事件在达到一次之后就会被删除，之后不会再被到达
 #define AE_DELETED_EVENT_ID -1
 
 /* Macros */
@@ -99,10 +99,10 @@ typedef struct aeFiredEvent {
 typedef struct aeEventLoop {
     int maxfd;   /* highest file descriptor currently registered */
     int setsize; /* max number of file descriptors tracked */           //最多监听事件个数
-    long long timeEventNextId;
+    long long timeEventNextId;                                          //时间事件的自增id
     aeFileEvent *events; /* Registered events */                        //存放监听的文件事件和处理其文件的具体func
     aeFiredEvent *fired; /* Fired events */                             //存放可以处理的文件描述符
-    aeTimeEvent *timeEventHead;
+    aeTimeEvent *timeEventHead;                                         //存放时间事件的一个链表
     int stop;
     void *apidata; /* This is used for polling API specific data */     //记录epoll_create返回的文件描述符，将用作其他所有epoll系统调用的的一个参数
     aeBeforeSleepProc *beforesleep;
@@ -122,7 +122,7 @@ long long aeCreateTimeEvent(aeEventLoop *eventLoop, long long milliseconds,
         aeTimeProc *proc, void *clientData,
         aeEventFinalizerProc *finalizerProc);
 int aeDeleteTimeEvent(aeEventLoop *eventLoop, long long id);
-int aeProcessEvents(aeEventLoop *eventLoop, int flags);
+int aeProcessEvents(aeEventLoop *eventLoop, int flags);                      
 int aeWait(int fd, int mask, long long milliseconds);
 void aeMain(aeEventLoop *eventLoop);
 char *aeGetApiName(void);

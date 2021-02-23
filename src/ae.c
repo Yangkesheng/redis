@@ -219,7 +219,7 @@ long long aeCreateTimeEvent(aeEventLoop *eventLoop, long long milliseconds,
     te->prev = NULL;
     te->next = eventLoop->timeEventHead;
     te->refcount = 0;
-    if (te->next)
+    if (te->next)                                   //防止te是第一个节点
         te->next->prev = te;
     eventLoop->timeEventHead = te;
     return id;
@@ -264,7 +264,7 @@ static long msUntilEarliestTimer(aeEventLoop *eventLoop) {
 }
 
 /* Process time events */
-static int processTimeEvents(aeEventLoop *eventLoop) {
+static int processTimeEvents(aeEventLoop *eventLoop) {              //时间事件执行函数
     int processed = 0;
     aeTimeEvent *te;
     long long maxId;
