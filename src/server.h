@@ -857,15 +857,15 @@ typedef struct client {
     int reqtype;            /* Request protocol type: PROTO_REQ_* */
     int multibulklen;       /* Number of multi bulk arguments left to read. */
     long bulklen;           /* Length of bulk argument in multi bulk request. */
-    list *reply;            /* List of reply objects to send to the client. */
+    list *reply;            /* List of reply objects to send to the client. */              //输出可变缓冲区，固定用完时，使用可变
     unsigned long long reply_bytes; /* Tot bytes of objects in reply list. */
     size_t sentlen;         /* Amount of bytes already sent in the current
                                buffer or object being sent. */
-    time_t ctime;           /* Client creation time. */
-    time_t lastinteraction; /* Time of the last interaction, used for timeout */
+    time_t ctime;           /* Client creation time. */                                     //客户端创建时间
+    time_t lastinteraction; /* Time of the last interaction, used for timeout */            //客户端和服务器最后一次互动
     time_t obuf_soft_limit_reached_time;
     uint64_t flags;         /* Client flags: CLIENT_* macros. */
-    int authenticated;      /* Needed when the default user requires auth. */
+    int authenticated;      /* Needed when the default user requires auth. */               //0：身份未经过验证 1：身份已经过验证
     int replstate;          /* Replication state if this is a slave. */
     int repl_put_online_on_ack; /* Install slave write handler on first ACK. */
     int repldbfd;           /* Replication DB file descriptor. */
@@ -917,9 +917,9 @@ typedef struct client {
      * before adding it the new value. */
     uint64_t client_cron_last_memory_usage;
     int      client_cron_last_memory_type;
-    /* Response buffer */
-    int bufpos;
-    char buf[PROTO_REPLY_CHUNK_BYTES];
+    /* Response buffer */                           //输出缓冲区
+    int bufpos;                                     //已使用大小
+    char buf[PROTO_REPLY_CHUNK_BYTES];              //16KB
 } client;
 
 struct saveparam {
