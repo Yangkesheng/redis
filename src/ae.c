@@ -362,8 +362,8 @@ int aeProcessEvents(aeEventLoop *eventLoop, int flags)          //文件事件�
         struct timeval tv, *tvp;
         long msUntilTimer = -1;
 
-        if (flags & AE_TIME_EVENTS && !(flags & AE_DONT_WAIT))
-            msUntilTimer = msUntilEarliestTimer(eventLoop);
+        if (flags & AE_TIME_EVENTS && !(flags & AE_DONT_WAIT))      //计算出下一个最近的时间事件的到达时间
+            msUntilTimer = msUntilEarliestTimer(eventLoop);         //用这段时间去处理轮寻处理文件时间
 
         if (msUntilTimer >= 0) {
             tv.tv_sec = msUntilTimer / 1000;
